@@ -27,6 +27,9 @@ import ErrorIcon from '@material-ui/icons/Error';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import TablePagination from '@material-ui/core/TablePagination';
 
+import { connect  } from 'react-redux';
+import { getProducts, deleteProducts} from '../Redux/Actions/product';
+
 const variantIcon = {
     success: CheckCircleIcon,
     error: ErrorIcon,
@@ -97,22 +100,21 @@ function DataProduct (props) {
         .catch((error) => setShowStatus(false))
     }
 
-    const deleteProduct = () => {
-        axios.delete(`${apiProduct}/${selectedRow.id}`, {headers: {"x-access-token":token}})
+    const deleteProduct = async() => {
+        await props.dispatch( deleteProducts(selectedRow))
         .then (res => {
             if (token === null) {
                 console.log ("JWT Expires");
             } else {
-                if (res.data.status !== 400) {
+                if (res.value.data.status !== 400) {
                     setShowStatus(true);
                     setSuccess("success");
                     setValidate("Success Delete Product");
                     handleAlertClose();
-                    fetchDataProduct();
                 } else {
                     setSuccess("error");
                     setShowStatus(true);
-                    setValidate(res.data.error);
+                    setValidate(res.value.data.error);
                 }
             }
         }).catch((error) => setShowStatus(false))
@@ -143,13 +145,14 @@ function DataProduct (props) {
         if (token === null) {
             return <Redirect to="/"/>
         } else {
-            const res = await axios (apiProduct, {headers: {"x-access-token":token}, 
-            params: {
-                item: rowsPerPage, 
-                page: page+1
-            }});
-            setDataProduct (res.data.result.response);
-            setInfoPage (res.data.result.infoPage);
+            await props.dispatch( getProducts(rowsPerPage, page + 1))
+            .then(result => {
+                setDataProduct (result.value.data.result.response);
+                setInfoPage (result.value.data.result.infoPage);
+            })
+            .catch(error => {
+                console.log (error);
+            })
         }
     }
 
@@ -256,7 +259,7 @@ function DataProduct (props) {
                 </TableHead>
 
                 
-                    {dataProduct.map((data, index) => {
+                    {props.dataProducts.map((data, index) => {
                         return(
                         <TableBody key={index}>
                             <TableRow>
@@ -581,4 +584,11 @@ function DataProduct (props) {
     )
 }
 
-export default withRouter(DataProduct);
+const mapStateToProps = state => {
+    return {
+        dataProducts: state.product.listProduct
+    };
+  };
+  
+  export default withRouter (connect (mapStateToProps) (DataProduct));
+// export default withRouter(DataProduct);
