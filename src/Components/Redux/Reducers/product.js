@@ -3,6 +3,8 @@ const initialState = {
     isLoading: false,
     isRejected: false,
     isFulfilled: false,
+    addedItem: [],
+    total: 0,
 };
 
 const product = (state = initialState, action) => {
@@ -28,7 +30,61 @@ const product = (state = initialState, action) => {
             isFulfilled: true,
             listProduct: action.payload.data.result.response,
         };
-    
+
+    //POST PRODUCT
+    case 'POST_PRODUCT_PENDING':
+        return {
+            ...state,
+            isLoading: true,
+            isRejected: false,
+            isFulfilled: false,
+        };
+    case 'POST_PRODUCT_REJECTED':
+        return {
+            ...state,
+            isLoading: false,
+            isRejected: true,
+        };
+    case 'POST_PRODUCT_FULFILLED':
+        if (action.payload.data.status == 200)
+            state.listProduct.push (action.payload.data.result[0])
+        return {
+            ...state,
+            isLoading: false,
+            isFulfilled: true,
+            listProduct: state.listProduct,
+        };
+
+    //EDIT PRODUCT
+    case 'PATCH_PRODUCT_PENDING':
+        return {
+            ...state,
+            isLoading: true,
+            isRejected: false,
+            isFulfilled: false,
+        };
+    case 'PATCH_PRODUCT_REJECTED':
+        return {
+            ...state,
+            isLoading: false,
+            isRejected: true,
+        };
+    case 'PATCH_PRODUCT_FULFILLED':
+        const listProductAfterPatch = state.listProduct.map (products => {
+            if (action.payload.data.status == 200) {
+                if (products.id == action.payload.data.result[0].id) {
+                    return action.payload.data.result[0];
+                }
+            }
+            return products;
+        });
+         return {
+            ...state,
+            isLoading: false,
+            isFulfilled: true,
+            listProduct: listProductAfterPatch
+        };
+
     //DELETE PRODUCT
     case 'DELETE_PRODUCT_PENDING':
         return {

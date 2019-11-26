@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect ,withRouter} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useStyles } from '../Styles/StyleProductCard';
 import Card from '@material-ui/core/Card';
@@ -13,6 +14,8 @@ import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
 import ArrowDownwardRoundedIcon from '@material-ui/icons/ArrowDownwardRounded';
 import SearchIcon from '@material-ui/icons/Search';
 
+import { addToCart } from '../Redux/Actions/order'
+
 function ProductCard (props) {
     
     const classes = useStyles();
@@ -22,6 +25,9 @@ function ProductCard (props) {
     const [sorting, setSorting] = useState ('ASC');
     const [search, setSearch] = useState ("");
     const apiProduct = `http://localhost:4000/api/product`;
+
+    const dispatch = useDispatch();
+
 
     const fetchDataProduct = async () => {
       if (token === null) {
@@ -69,6 +75,10 @@ function ProductCard (props) {
       setTimeout(() => {
         fetchDataProduct();
       }, 0);
+    }
+
+    const handleAddToCart = async(selectedProduct) => {
+        await dispatch (addToCart(selectedProduct));
     }
 
     useEffect(() => {
@@ -151,8 +161,13 @@ function ProductCard (props) {
                         <Typography variant="body2" color="primary" component="p">
                           Rp.{data.price}
                         </Typography>
-                        <Button variant="contained" color="secondary" className={classes.button}>
-                              Add
+                        <Button 
+                          variant="contained"
+                          color="secondary"
+                          className={classes.button}
+                          onClick={() => handleAddToCart(data)}
+                          >
+                            Add
                         </Button>
                     </Grid>
                   </CardContent>
@@ -166,4 +181,4 @@ function ProductCard (props) {
     )
 }
 
-export default withRouter(ProductCard);
+export default ProductCard;

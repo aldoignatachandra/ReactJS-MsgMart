@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
+// import { useDispatch, useSelector } from 'react-redux';
 import { Redirect , withRouter} from 'react-router-dom';
 import { useStyles } from '../Styles/StyleMainPage';
 import {Typography, Grid, Paper, Button} from '@material-ui/core/';
+import { connect } from 'react-redux';
 
 //Card
 import ProductCard from './CardProduct';
-// import OrderCard from '../Layout/Order';
+import OrderCard from './CardOrder';
 
 function MainPage (props) {
 
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
+    // const addProduct = useSelector(state => state.order.addedItem);
+    
     return (
         <Grid container>
             <Grid item xs={12} md={12} lg={8}>
@@ -29,9 +32,6 @@ function MainPage (props) {
                     <Typography align="center" variant="h5" style={{fontWeight:"bold"}}>
                         CART
                     </Typography>
-                    <img className={classes.cartMaintenance} 
-                        src="http://fgcdn-c86c.kxcdn.com/images/uploads/_framed/maintenance-1151312_960_720-kZwHzyBi-650-497.png">
-                    </img>
                 </Paper>
                 <Paper className={fixedHeightPaper} style={{height: "70vh"}}>
                     {/* List Order */}
@@ -41,9 +41,9 @@ function MainPage (props) {
                     justify="space-around"
                     alignItems="flex-start"
                     >
-                    {/* {[0,1,2,3].map(item=>(
-                        <OrderCard></OrderCard> 
-                    ))} */}
+                    {props.addedItem.length == 0 ? "EMPTY CART" : props.addedItem.map(item => (
+                        <OrderCard item = {item}></OrderCard>
+                    ))}
                     </Grid>
                 </Paper>
 
@@ -63,4 +63,11 @@ function MainPage (props) {
     )
 }
 
-export default withRouter(MainPage);
+const mapStateToProps = state => {
+    return {
+        addedItem: state.order.addedItem
+    };
+};
+
+export default withRouter (connect (mapStateToProps) (MainPage));
+// export default withRouter(MainPage);

@@ -25,7 +25,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import TablePagination from '@material-ui/core/TablePagination';
 
-import { connect  } from 'react-redux';
+import { connect } from 'react-redux';
 import { getCategories, postCategories, patchCategories, deleteCategories } from '../Redux/Actions/categories';
 
 const variantIcon = {
@@ -362,4 +362,4 @@ const mapStateToProps = state => {
     };
   };
   
-  export default connect (mapStateToProps) (DataCategory);
+export default connect (mapStateToProps) (DataCategory);

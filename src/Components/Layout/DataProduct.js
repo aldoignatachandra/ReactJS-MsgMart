@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect ,withRouter} from 'react-router-dom';
-import axios from 'axios';
+import { Redirect ,withRouter } from 'react-router-dom';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Table';
 import Avatar from '@material-ui/core/Avatar';
@@ -28,7 +27,8 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import TablePagination from '@material-ui/core/TablePagination';
 
 import { connect  } from 'react-redux';
-import { getProducts, deleteProducts} from '../Redux/Actions/product';
+import { getProducts, deleteProducts, postProducts, patchProducts} from '../Redux/Actions/product';
+import { getCategories } from '../Redux/Actions/categories';
 
 const variantIcon = {
     success: CheckCircleIcon,
@@ -72,28 +72,23 @@ function DataProduct (props) {
     const [infoPage, setInfoPage] = useState({maxPage: 0, totalAllProduct: 0});
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const apiProduct = `http://localhost:4000/api/product`;
-    const apiCategory = `http://localhost:4000/api/category`
-    
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, infoPage.totalAllProduct - page * rowsPerPage);
 
-    const addProduct = () => {
-        axios.post(apiProduct, postDataProduct, {headers: {"x-access-token":token}})
+    const addProduct = async() => {
+        await props.dispatch( postProducts(postDataProduct))
         .then(res => {
             if (token === null) {
                 console.log ("JWT Expires");
             } else {
-                if (res.data.status !== 400) {
+                if (res.value.data.status !== 400) {
                     setShowStatus(true);
                     setSuccess("success");
                     setValidate("Success Add New Product");
                     handleAddClose();
-                    fetchDataProduct();
                 } else {
                     setSuccess("error");
                     setShowStatus(true);
-                    setValidate(res.data.error);
-                    console.log(postDataProduct);
+                    setValidate(res.value.data.error);
                 }
             }
         })
@@ -120,22 +115,21 @@ function DataProduct (props) {
         }).catch((error) => setShowStatus(false))
     }
 
-    const editProduct = () => {
-        axios.put(`${apiProduct}/${selectedRow.id}`, selectedRow, {headers: {"x-access-token":token}})
+    const editProduct = async() => {
+        await props.dispatch( patchProducts(selectedRow))
         .then (res => {
             if (token === null) {
                 console.log ("JWT Expires");
             } else {
-                if (res.data.status !== 400) {
+                if (res.value.data.status !== 400) {
                     setShowStatus(true);
                     setSuccess("success");
                     setValidate("Success Edit Product");
                     handleEditClose();
-                    fetchDataProduct();
                 } else {
                     setSuccess("error");
                     setShowStatus(true);
-                    setValidate(res.data.error);
+                    setValidate(res.value.data.error);
                 }
             }
         }).catch((error) => setShowStatus(false))
@@ -160,8 +154,12 @@ function DataProduct (props) {
         if (token === null) {
             return <Redirect to="/"/>
         } else {
-            const res = await axios (apiCategory, {headers: {"x-access-token":token}});
-            setDataCategory (res.data.result.response);
+            await props.dispatch( getCategories())
+            .then(res => {
+                setDataCategory (res.value.data.result.response);
+            }).catch(error => {
+                console.log(error);
+            })
         }
     }   
 
@@ -257,13 +255,11 @@ function DataProduct (props) {
                     <TableCell align="center" className={classes.tableHeader}>Actions</TableCell>
                     </TableRow>
                 </TableHead>
-
-                
                     {props.dataProducts.map((data, index) => {
                         return(
                         <TableBody key={index}>
                             <TableRow>
-                                <TableCell align="center">{data.product_name}</TableCell>
+                                <TableCell align="center">{data.product_name || data.name}</TableCell>
                                 <TableCell align="center">{data.category}</TableCell>
                                 <TableCell align="center">{data.description}</TableCell>
                                 <TableCell align="center">{data.quantity}</TableCell>
@@ -313,9 +309,9 @@ function DataProduct (props) {
                     
             </Table>
 
-            {/* Modal Add Category */}
+            {/* Modal Add Product */}
             <Dialog open={add} onClose={handleAddClose}>
-                <DialogTitle><b>Add New Category</b></DialogTitle>
+                <DialogTitle><b>Add New Product</b></DialogTitle>
                 <DialogContent>
                     <table>
                         <tbody>
@@ -378,7 +374,6 @@ function DataProduct (props) {
                                     margin="dense"
                                     required
                                     InputProps={{ inputProps: { min: 1000 } }}
-                                    defaultValue="1000"
                                     name='price'
                                     onChange={inputChangeAdd}
                                 />
@@ -399,7 +394,6 @@ function DataProduct (props) {
                                     margin="dense"
                                     required
                                     InputProps={{ inputProps: { min: 1 } }}
-                                    defaultValue="1"
                                     name='quantity'
                                     onChange={inputChangeAdd}
                                 />
@@ -416,7 +410,7 @@ function DataProduct (props) {
                                         required
                                         name="category_id"
                                     >
-                                        {dataCategory.map ((item, index) => (
+                                        {props.dataCategories.map ((item, index) => (
                                             <MenuItem key={index} value={item.id}>{item.name}</MenuItem>
                                         ))}
                                     </Select>
@@ -586,9 +580,9 @@ function DataProduct (props) {
 
 const mapStateToProps = state => {
     return {
-        dataProducts: state.product.listProduct
+        dataProducts: state.product.listProduct,
+        dataCategories: state.categories.listCategory
     };
-  };
+};
   
-  export default withRouter (connect (mapStateToProps) (DataProduct));
-// export default withRouter(DataProduct);
+export default withRouter (connect (mapStateToProps) (DataProduct));
