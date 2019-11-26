@@ -1,7 +1,7 @@
 <h1 align="center">MSG - Mart<br>( React JS Point of Sales - Web App)</h1>
 
 <p align="center">
-  <img src="screenshot/icon.png" width="200"/>
+  <img src="screenshot/Icon.png" width="200"/>
 </p>
 
 <p align="center">
