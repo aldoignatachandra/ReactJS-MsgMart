@@ -8,7 +8,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
-import { Redirect ,withRouter} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,7 +71,7 @@ export default function EnhancedTable() {
     const [page, setPage] = useState(0);
     const [infoPage, setInfoPage] = useState({maxPage: 0, totalAllCategories: 0});
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const apiCategory = `http://localhost:4000/api/category`
+    const apiCategory = `https://pointofsalesapp.herokuapp.com/api/category`
 
     const fetchDataCategory = async () => {
         console.log(rowsPerPage, page, "uye")

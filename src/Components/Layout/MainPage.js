@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 // import { useDispatch, useSelector } from 'react-redux';
-import { Redirect , withRouter} from 'react-router-dom';
+import { withRouter} from 'react-router-dom';
 import { useStyles } from '../Styles/StyleMainPage';
 import {Typography, Grid, Paper, Button} from '@material-ui/core/';
 import { connect } from 'react-redux';

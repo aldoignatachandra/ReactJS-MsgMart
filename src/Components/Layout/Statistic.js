@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
-import { Redirect, withRouter } from 'react-router-dom';
-import { Typography, Grid, Paper} from '@material-ui/core/';
+import { withRouter } from 'react-router-dom';
+import { Typography } from '@material-ui/core/';
 import { useStyles } from '../Styles/StyleDataCategory';
 
 function Statistic (props) {
     const classes = useStyles();
-    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
+    
     return (
         <div className={classes.root}>
             <Typography className={classes.paper} variant="h5" component="h2">

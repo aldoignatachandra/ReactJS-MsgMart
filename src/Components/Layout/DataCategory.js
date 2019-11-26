@@ -69,8 +69,6 @@ function DataCategory (props) {
     const [showStatus, setShowStatus] = useState(false);
     const [validate, setValidate] = useState ("");
     const [success, setSuccess] = useState ("error")
-    const apiCategory = 'http://localhost:4000/api/category/';
-
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, infoPage.totalAllCategories - page * rowsPerPage);
 

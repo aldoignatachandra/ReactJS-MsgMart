@@ -24,7 +24,7 @@ function ProductCard (props) {
     const [order, setOrder] = useState ('');
     const [sorting, setSorting] = useState ('ASC');
     const [search, setSearch] = useState ("");
-    const apiProduct = `http://localhost:4000/api/product`;
+    const apiProduct = `https://pointofsalesapp.herokuapp.com/api/product`;
 
     const dispatch = useDispatch();
 
