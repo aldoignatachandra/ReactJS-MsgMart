@@ -64,5 +64,4 @@ Mobile App [MSG-Mart](https://github.com/aldoignatachandra/MSG-Mart-React_Native
 </p>
 
 ## License
-----
 [ISC](https://en.wikipedia.org/wiki/ISC_license "ISC")
